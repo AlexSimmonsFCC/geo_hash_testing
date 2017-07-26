@@ -2,7 +2,7 @@
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=no" />
     <meta charset="utf-8">
 
-    <link rel="stylesheet" href="https://js.arcgis.com/4.4/esri/css/main.css">
+    <link rel="stylesheet" href="//js.arcgis.com/4.4/esri/css/main.css">
     <link rel="stylesheet" href="css/style.css">
 
     <script>
@@ -14,10 +14,10 @@
             }
         };
     </script>
-    <script src="http://code.jquery.com/jquery-3.2.1.min.js"
+    <script src="//code.jquery.com/jquery-3.2.1.min.js"
             integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
             crossorigin="anonymous"></script>
-    <script src="https://js.arcgis.com/4.4/"></script>
+    <script src="//js.arcgis.com/4.4/"></script>
     <script>
     require([
       "esri/Map",
@@ -35,7 +35,7 @@
     ], function (Map, MapView, GraphicsLayer, Graphic, Point, SimpleFillSymbol, TextSymbol, QueryTask, Query, watchUtils, geohash) {
 
         //Feature service URL
-        var featureService = "http://services.arcgis.com/OLiydejKCZTGhvWg/arcgis/rest/services/Airports28062017/FeatureServer/0"
+        var featureService = "//services.arcgis.com/OLiydejKCZTGhvWg/arcgis/rest/services/Airports28062017/FeatureServer/0"
 
         //Option for a user to add feature service as url parameter, e.g. http://path-to-app/index.html?http://services.arcgis.com/OLiydejKCZTGhvWg/arcgis/rest/services/Airports28062017/FeatureServer/0
         var urlParams = window.location.search.substr(1)
