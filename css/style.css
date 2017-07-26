@@ -1,0 +1,19 @@
+body {
+    margin: 0;
+}
+
+#viewDiv{
+    position: absolute;
+    left: 0px;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+}
+
+#loading {
+    position: absolute;
+    bottom: 25px;
+    right:25px;
+    display:none;
+    z-index: 9999;
+}

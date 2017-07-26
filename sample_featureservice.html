@@ -1,0 +1,199 @@
+﻿<head>
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=no" />
+    <meta charset="utf-8">
+
+    <link rel="stylesheet" href="https://js.arcgis.com/4.4/esri/css/main.css">
+    <link rel="stylesheet" href="css/style.css">
+
+    <script>
+        var dojoConfig = {
+            async: true,
+            isDebug: true,
+            paths: {
+                modules: location.href.replace(location.href.split("/").pop(),"") + "/lib/modules"
+            }
+        };
+    </script>
+    <script src="http://code.jquery.com/jquery-3.2.1.min.js"
+            integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+            crossorigin="anonymous"></script>
+    <script src="https://js.arcgis.com/4.4/"></script>
+    <script>
+    require([
+      "esri/Map",
+      "esri/views/MapView",
+      "esri/layers/GraphicsLayer",
+      "esri/Graphic",
+      "esri/geometry/Point",
+      "esri/symbols/SimpleFillSymbol",
+      "esri/symbols/TextSymbol",
+      "esri/tasks/QueryTask", 
+      "esri/tasks/support/Query",
+      "esri/core/watchUtils",
+      "modules/geohash",
+      "dojo/domReady!"
+    ], function (Map, MapView, GraphicsLayer, Graphic, Point, SimpleFillSymbol, TextSymbol, QueryTask, Query, watchUtils, geohash) {
+
+        //Feature service URL
+        var featureService = "http://services.arcgis.com/OLiydejKCZTGhvWg/arcgis/rest/services/Airports28062017/FeatureServer/0"
+
+        //Option for a user to add feature service as url parameter, e.g. http://path-to-app/index.html?http://services.arcgis.com/OLiydejKCZTGhvWg/arcgis/rest/services/Airports28062017/FeatureServer/0
+        var urlParams = window.location.search.substr(1)
+        if (urlParams != "") {
+            featureService = urlParams;
+        }
+
+        //Globals for keeping tabs on the number of query requests we are making versus how many have come back successfully
+        var requestTotal = 0;
+        var total = 0;
+
+        //Function for querying the feature service - takes a polygon geometry
+        function queryService(geometry) {
+            var queryTask = new QueryTask({
+                url: featureService
+            });
+            var query = new Query();
+            query.geometry = geometry; 
+            query.spatialRelationship = "intersects";
+            query.returnGeometry = false;
+            queryTask.executeForCount(query).then(function (result) {
+                //Increment request total variable
+                requestTotal++;
+                addToMap(geometry, result)
+            });
+        }
+
+        //Function for adding geohashes to the map and including a count of features that fall inside that geohash
+        function addToMap(geometry,count) {
+            var polygon = geometry;
+            var point = new Point({
+                longitude: polygon.centroid.longitude,
+                latitude: polygon.centroid.latitude
+            })
+
+            //Set the background colour to transparent if there are no features within the geohash. Otherwise make it orange and semi-transparent
+            var countColour;
+            if (count === 0) {
+                countColour = [255, 255, 255, 0];
+            }
+            else {
+                countColour = [227, 139, 79, 0.5];
+            }
+
+            //Create a text symbol with the count as the text value
+            var textSymbol = new TextSymbol({
+                color: "white",
+                text: String(count),
+                font: {
+                    size: 12,
+                    family: "sans-serif",
+                    weight: "bolder"
+                }
+            });
+
+            // Create a symbol for rendering the graphic
+            var fillSymbol = new SimpleFillSymbol({
+                color: countColour,
+                outline: { 
+                    color: [255, 255, 255],
+                    width: 1
+                }
+            });
+
+            // Add the geohash geometry and symbol to a new graphic
+            var polygonGraphic = new Graphic({
+                geometry: polygon,
+                symbol: fillSymbol
+            });
+
+            //Create a point graphic at the center of the geohash to position the count number 
+            var pointGraphic = new Graphic({
+                geometry: point,
+                symbol: textSymbol
+            });
+
+            //Add the graphics to the graphics layer
+            layer.add(polygonGraphic);
+            layer.add(pointGraphic);
+
+            //If the number of geohashes matches the number of requests, let the user interact with the map again and reset counters
+            if (total === requestTotal) {
+                $('#viewDiv').css('pointer-events', 'auto');
+                $('.esri-zoom').css('pointer-events', 'auto');
+                $('#loading').css('display', 'none');
+                requestTotal = 0;
+                total = 0;
+            }
+        }
+      //Setup map and view
+      var map = new Map({
+          basemap: "topo-vector"
+      });
+      var view = new MapView({
+        container: "viewDiv",
+        map: map,
+        zoom: 2,
+        center: [3.4, 35.3]
+      });
+
+        //Ccreate and add graphics layer
+      var layer = new GraphicsLayer();
+      map.add(layer);
+
+        //Function for creating a geohash grid for the current view extent
+      function buildGrid() {
+          //Disable map interaction and display loading image whilst geohash is being built
+          $('#viewDiv').css('pointer-events', 'none');
+          $('.esri-zoom').css('pointer-events', 'none');
+          $('#loading').css('display', 'block');
+          //Remove any graphics currently displayed
+          layer.removeAll();
+          //Based on the current zoom level, set appropriate geohash precision
+          var zoom = view.zoom;
+          if (zoom <= 4) {
+              precision = 2
+          }
+          else if (zoom > 4 && zoom <= 7) {
+              precision = 3
+          }
+          else if (zoom > 7 && zoom <= 10) {
+              precision = 4
+          }
+          else if (zoom > 10 && zoom <= 11) {
+              precision = 5
+          }
+          else if (zoom > 11 && zoom <= 13) {
+              precision = 6
+          }
+          else if (zoom > 13 && zoom <= 16) {
+              precision = 7
+          }
+          else if (zoom > 16) {
+              precision = 8
+          }
+          //Build geohash grid using geohash-helper module. Returns array of polygons
+          var geohashPolygons = geohash.buildGeohashPolygons(view, precision);
+
+          //Set the total to the number of polygons we need to query our feature service with
+          total = geohashPolygons.length;
+
+          //Run queryService function for each returned polygon
+          for (i = 0; i < geohashPolygons.length; i++) {
+              queryService(geohashPolygons[i])
+          }
+      }
+
+     //Once the view has loaded watch the view and run the build grid function every time the map is panned or zoomed
+      view.then(function () {
+          var watch = watchUtils.when(view, "stationary", buildGrid);
+      });
+    });
+    </script>
+</head>
+
+<body>
+    <div id="viewDiv"></div>
+    <div id="loading">
+        <img src="images/loading.png" width="100px" height="100px"/>
+    </div>
+</body>
