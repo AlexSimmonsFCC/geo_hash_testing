@@ -10,7 +10,7 @@ A sample app can be found [here](http://bit.ly/2vLojXH). This uses the module to
 # Using
 Start by cloning the repo and to ensure you have a copy of the modules folder. Point to the modules folder in the head of your HTML file
 
-'''HTML
+'''
  <script>
         var dojoConfig = {
             async: true,
@@ -24,7 +24,7 @@ Start by cloning the repo and to ensure you have a copy of the modules folder. P
 
 In your JavaScript load the geohash-helper module alongside ArcGIS modules you are making use of.
 
-'''JavaScript
+'''
 require([
             "esri/Map",
             "esri/views/MapView",
@@ -34,7 +34,7 @@ require([
 
 Available methods are...
 
-'''JavaScript
+'''
 
 geohash.getGeohashPolygon(geohashcode) //Takes a geohash code as a string, e.g. "djb". Returns a polygon object
 geohash.getGeohashPolygons(geohashcodes) //Takes an array of geohash codes, e.g. ["djb","djc"].. Returns an array of polygon objects
