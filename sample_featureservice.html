@@ -4,6 +4,7 @@
 
     <link rel="stylesheet" href="//js.arcgis.com/4.4/esri/css/main.css">
     <link rel="stylesheet" href="css/style.css">
+    <title>geohash-helper feature service demo</title>
 
     <script>
         var dojoConfig = {
@@ -34,12 +35,6 @@
 
             //Feature service URL
             var featureService = "//services.arcgis.com/OLiydejKCZTGhvWg/arcgis/rest/services/Airports28062017/FeatureServer/0"
-
-            //Option for a user to add feature service as url parameter, e.g. http://path-to-app/index.html?http://services.arcgis.com/OLiydejKCZTGhvWg/arcgis/rest/services/Airports28062017/FeatureServer/0
-            var urlParams = window.location.search.substr(1)
-            if (urlParams != "") {
-                featureService = urlParams;
-            }
 
             //Globals for keeping tabs on the number of query requests we are making versus how many have come back successfully
             var requestTotal = 0;
@@ -178,6 +173,24 @@
             view.then(function() {
                 var watch = watchUtils.when(view, "stationary", buildGrid);
             });
+            
+            //Update feature service and run function to kick things off when user enters a url and clicks the button or...
+            $( "#fs-button" ).click(function() {
+                var enteredText = $('#fs-text').val();
+                featureService = enteredText.replace(/^https?\:/i, "");
+                buildGrid();
+            });
+
+            //...hits the enter key
+            $('#fs-text').bind('keyup', function(e) {
+                if ( e.keyCode === 13 ) {
+                    var enteredText = $('#fs-text').val();
+                    featureService = enteredText.replace(/^https?\:/i, "");
+                    buildGrid();
+                }
+
+            });
+
         });
     </script>
 </head>
@@ -185,6 +198,12 @@
 <body>
     <div id="viewDiv"></div>
     <div id="loading">
-        <img src="images/loading.png" width="100px" height="100px" />
+                <img src="images/loading.png" width="100px" height="100px" />
+            </div>
+    <div id="configFs">
+       <p>Generate a geohash aggregation of a feature service. Demo uses a feature service of world airport locations. Enter a feature service URL below to try it out on data of your choice.</p>
+        <p><input type="text" id="fs-text" placeholder="Enter feature service layer URL" />
+        <button type="button" id="fs-button">Let's go!</button></p>
+        <p><a href="https://github.com/maplabs/geohash-helper" target="_blank">View on GitHub here</a></p>
     </div>
 </body>
