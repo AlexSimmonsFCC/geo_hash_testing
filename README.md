@@ -1,13 +1,13 @@
 # **geohash-helper**
 
-# About
+# about
 geohash-helper is an AMD module you can pull into your ArcGIS API for JavaScript version 4.4+ applications to help you build and work with geohash grid data. Built using [version 4 of the ArcGIS API for Javascript](https://developers.arcgis.com/javascript/) and [latlon-geohash](https://github.com/chrisveness/latlon-geohash).
 
 
-# Sample
+# sample
 A sample app can be found [here](http://bit.ly/2vLojXH). This uses the module to generate a geohash grid based on the current map view extent. It then sends off a series of queries to a feature service to find out the number of features within each geohash grid shape and displays this to the user.
 
-# Using
+# using
 Start by cloning the repo and ensure you have a copy of the modules folder. Point to the modules folder in the head of your HTML file
 
 ```HTML
@@ -46,13 +46,13 @@ geohash.buildGeohashPolygons(view,precision) //Takes a map view object and a geo
 
 Note - requries the view's spatial reference to be Web Mercator. 
 
-# Issues
+# issues
 
 Find a bug or want to request a new feature? Please let us know by submitting an issue.
 
-# Licensing
+# licensing
 
-Copyright 2016 ESRI (UK) Limited
+Copyright 2017 ESRI (UK) Limited
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
 
