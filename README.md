@@ -38,7 +38,7 @@ Available methods are...
 ```JavaScript
 
 geohash.getGeohashPolygon(geohashcode) //Takes a geohash code as a string, e.g. "djb". Returns a polygon object
-geohash.getGeohashPolygons(geohashcodes) //Takes an array of geohash codes, e.g. ["djb","djc"].. Returns an array of polygon objects
+geohash.getGeohashPolygons(geohashcodes) //Takes an array of geohash codes, e.g. ["djb","djc"]. Returns an array of polygon objects
 geohash.buildGeohash(view,precision) //Takes a map view object and a geohash grid precision number. Returns an array of geohash codes for the view extent
 geohash.buildGeohashPolygons(view,precision) //Takes a map view object and a geohash grid precision number. Returns an array of polygon objects for the view extent
 
