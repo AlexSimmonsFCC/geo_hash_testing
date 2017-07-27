@@ -30,7 +30,8 @@ require([
             "esri/views/MapView",
             "modules/geohash"
         ], function(Map, MapView, geohash) {...
-            ```
+
+```
 
 Available methods are...
 
