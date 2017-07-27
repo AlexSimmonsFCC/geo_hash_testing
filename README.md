@@ -5,7 +5,7 @@ geohash-helper is an AMD module you can pull into your ArcGIS API for JavaScript
 
 
 # Sample
-A sample app can be found [here](http://bit.ly/2vLojXH). This uses the module to generate a geohash grid based on the current map view extent. It then sends off a series of queries to a feature service to find out the number of features within (or intersect) each geohash grid shape and displays this to the user.
+A sample app can be found [here](http://bit.ly/2vLojXH). This uses the module to generate a geohash grid based on the current map view extent. It then sends off a series of queries to a feature service to find out the number of features within (or that intersect) each geohash grid shape and displays this to the user.
 
 # Using
 Start by cloning the repo and ensure you have a copy of the modules folder. Point to the modules folder in the head of your HTML file
