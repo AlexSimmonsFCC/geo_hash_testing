@@ -22,7 +22,7 @@ Start by cloning the repo and ensure you have a copy of the modules folder. Poin
     </script>
 ```
 
-In your JavaScript load the geohash-helper module alongside ArcGIS modules you are making use of.
+In your JavaScript load the geohash-helper module alongside ArcGIS modules you are using
 
 ```JavaScript
 require([
