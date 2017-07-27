@@ -1,7 +1,7 @@
 # **geohash-helper**
 
 # About
-geohash-helper is an AMD module you can pull into your ArcGIS API for JavaScript version 4.4+ applications to help you build and work with geohash grid data.
+geohash-helper is an AMD module you can pull into your ArcGIS API for JavaScript version 4.4+ applications to help you build and work with geohash grid data. Built using [version 4 of the ArcGIS API for Javascript](https://developers.arcgis.com/javascript/) and [latlon-geohash](https://github.com/chrisveness/latlon-geohash).
 
 
 # Sample
