@@ -125,7 +125,8 @@
                 container: "viewDiv",
                 map: map,
                 zoom: 2,
-                center: [3.4, 35.3]
+                center: [3.4, 35.3],
+                constraints: {minZoom: 2}
             });
 
             //Ccreate and add graphics layer
@@ -141,8 +142,9 @@
                 //Remove any graphics currently displayed
                 layer.removeAll();
                 //Based on the current zoom level, set appropriate geohash precision
+                precision = 1;
                 var zoom = view.zoom;
-                if (zoom <= 4) {
+                if (zoom >2 && zoom <= 4) {
                     precision = 2
                 } else if (zoom > 4 && zoom <= 7) {
                     precision = 3
