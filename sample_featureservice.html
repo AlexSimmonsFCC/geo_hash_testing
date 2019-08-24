@@ -39,11 +39,15 @@
             var featureService = "https://services2.arcgis.com/zNjnZafDYCAJAbN0/arcgis/rest/services/Street_ROW_Trees/FeatureServer/2"
 
             //Globals for keeping tabs on the number of query requests we are making versus how many have come back successfully
+            // and to cache the counts
             var requestTotal = 0;
             var total = 0;
+            var cache = {}
+            window.__cache = cache
 
             //Function for querying the feature service - takes a polygon geometry
-            function queryService(geometry) {
+            function queryService(code) {
+                var geometry = geohash.getGeohashPolygon(code)
                 var queryTask = new QueryTask({
                     url: featureService
                 });
@@ -52,6 +56,8 @@
                 query.spatialRelationship = "intersects";
                 query.returnGeometry = false;
                 queryTask.executeForCount(query).then(function(result) {
+                    // cache the response
+                    cache[code] = result
                     //Increment request total variable
                     requestTotal++;
                     addToMap(geometry, result)
@@ -154,14 +160,27 @@
                     precision = 8
                 }
                 //Build geohash grid using geohash-helper module. Returns array of polygons
-                var geohashPolygons = geohash.buildGeohashPolygons(view, precision);
+                // var geohashPolygons = geohash.buildGeohashPolygons(view, precision);
+                var geohashCodes = geohash.buildGeohash(view, precision);
 
                 //Set the total to the number of polygons we need to query our feature service with
-                total = geohashPolygons.length;
+                // total = geohashPolygons.length;
+                total = 0
 
                 //Run queryService function for each returned polygon
-                for (i = 0; i < geohashPolygons.length; i++) {
-                    queryService(geohashPolygons[i])
+                // for (i = 0; i < geohashPolygons.length; i++) {
+                for (i = 0; i < geohashCodes.length; i++) {
+                    var code = geohashCodes[i]
+                    var count = cache[code];
+                    if (count || count === 0) {
+                        // use the cached query value
+                        addToMap(geohash.getGeohashPolygon(code), count)
+                    } else {
+                        // don't have this cached yet, so query it
+                        total = total + 1
+                        // queryService(geohashPolygons[i])
+                        queryService(code)
+                    }
                 }
             }
 
@@ -189,6 +208,7 @@
             $( "#fs-button" ).click(function() {
                 var enteredText = $('#fs-text').val();
                 featureService = enteredText.replace(/^https?\:/i, "");
+                cache = {}
                 buildGrid();
             });
 
@@ -197,6 +217,7 @@
                 if ( e.keyCode === 13 ) {
                     var enteredText = $('#fs-text').val();
                     featureService = enteredText.replace(/^https?\:/i, "");
+                    cache = {}
                     buildGrid();
                 }
 
