@@ -34,7 +34,9 @@
         ], function(Map, MapView, GraphicsLayer, Graphic, Point, SimpleFillSymbol, TextSymbol, QueryTask, Query, watchUtils, geohash) {
 
             //Feature service URL
-            var featureService = "//services.arcgis.com/OLiydejKCZTGhvWg/arcgis/rest/services/Airports28062017/FeatureServer/0"
+            // var featureService = "//services.arcgis.com/OLiydejKCZTGhvWg/arcgis/rest/services/Airports28062017/FeatureServer/0"
+            // 75K trees in Pasadena (hosted)
+            var featureService = "https://services2.arcgis.com/zNjnZafDYCAJAbN0/arcgis/rest/services/Street_ROW_Trees/FeatureServer/2"
 
             //Globals for keeping tabs on the number of query requests we are making versus how many have come back successfully
             var requestTotal = 0;
@@ -117,19 +119,11 @@
                     total = 0;
                 }
             }
-            //Setup map and view
+            //Setup map and layer
             var map = new Map({
                 basemap: "topo-vector"
             });
-            var view = new MapView({
-                container: "viewDiv",
-                map: map,
-                zoom: 2,
-                center: [3.4, 35.3],
-                constraints: {minZoom: 2}
-            });
-
-            //Ccreate and add graphics layer
+            //create and add graphics layer
             var layer = new GraphicsLayer();
             map.add(layer);
 
@@ -171,9 +165,24 @@
                 }
             }
 
-            //Once the view has loaded watch the view and run the build grid function every time the map is panned or zoomed
-            view.then(function() {
-                var watch = watchUtils.when(view, "stationary", buildGrid);
+            var view;
+            // get feature service extent
+            fetch(`${featureService}?f=json`)
+              .then(response => response.json())
+              .then(layerInfo => {
+                // create a new map view at that extent
+                view = new MapView({
+                    container: "viewDiv",
+                    map: map,
+                    zoom: 2,
+                    extent: layerInfo.extent,
+                    // center: [3.4, 35.3],
+                    constraints: {minZoom: 2}
+                });
+                //Once the view has loaded watch the view and run the build grid function every time the map is panned or zoomed
+                view.then(function() {
+                    var watch = watchUtils.when(view, "stationary", buildGrid);
+                });
             });
             
             //Update feature service and run function to kick things off when user enters a url and clicks the button or...
