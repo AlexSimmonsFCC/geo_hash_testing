@@ -34,9 +34,31 @@
         ], function(Map, MapView, GraphicsLayer, Graphic, Point, SimpleFillSymbol, TextSymbol, QueryTask, Query, watchUtils, geohash) {
 
             //Feature service URL
+            // default service seems to have been removed
             // var featureService = "//services.arcgis.com/OLiydejKCZTGhvWg/arcgis/rest/services/Airports28062017/FeatureServer/0"
-            // 75K trees in Pasadena (hosted)
-            var featureService = "https://services2.arcgis.com/zNjnZafDYCAJAbN0/arcgis/rest/services/Street_ROW_Trees/FeatureServer/2"
+            // 75K trees (points) in Pasadena (hosted)
+            var mediumHostedPointService = "https://services2.arcgis.com/zNjnZafDYCAJAbN0/arcgis/rest/services/Street_ROW_Trees/FeatureServer/2"
+            // 557K crashes (points) in Iowa (hosted)
+            var largeHostedPointService = "https://servicesqa.arcgis.com/97KLIFOSt5CxbiRI/arcgis/rest/services/Crash_Data_Iowa/FeatureServer/0"
+            // 199K streets (lines) in NYC (hosted)
+            var largeHostedLineService = "https://servicesqa.arcgis.com/97KLIFOSt5CxbiRI/arcgis/rest/services/QA_data_largeLines/FeatureServer/0"
+            // 74K US census tracts (hosted)
+            var mediumHostedPolygonService = "https://servicesqa.arcgis.com/97KLIFOSt5CxbiRI/arcgis/rest/services/ACS5_2015_tractsTIGER_Housing_WMAS/FeatureServer/0"
+            // 176K 60cm imagery footprints (hosted) - near global extent
+            var globalMediumHostedPolygonService = "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/2"
+            // 220K US census block groups
+            var largeHostedPolygonService = "https://servicesqa.arcgis.com/97KLIFOSt5CxbiRI/arcgis/rest/services/ACS5_2015_blockgroupsTIGER_Social_WMAS/FeatureServer/0"
+            // 165K contours (lines) in Marietta, GA
+            // only loaded about 1/3 of counts at full extent and then crashed after 60 sec (JSAPI timeout)
+            var largeLineService = "https://www.cobbgis.org/arcgisago/rest/services/basemap/OpenDataNaturalfeaturespublicmapwm/FeatureServer/0"
+            // 94K building restriction lines (?) in DC
+            // loads at full extent in ~47 sec - this appears to be the limit for non-hosted line services
+            var mediumLineService = "https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Property_and_Land_WebMercator/MapServer/9"
+            // 137K lots (polygons) in DC
+            // loads at full extent in ~35 sec
+            var largePolygonService = "https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Property_and_Land_WebMercator/MapServer/40"
+            // TODO: add some way to toggle this?
+            var featureService = mediumHostedPointService
 
             //Globals for keeping tabs on the number of query requests we are making versus how many have come back successfully
             // and to cache the counts
